@@ -10,15 +10,16 @@ module Discuz
     
     def login username, password
       form_url       = @base_url + "logging.php?action=login"
-      form_resp      = @agent.get form_url, "-D #{@agent.cookie_file}"
-      puts form_resp
+      form_resp      = @agent.get form_url, :save_cookie => true
       form_doc       = Nokogiri::HTML(form_resp)
       formhash_input = form_doc.css("form input[name=formhash]")
       if formhash_input.first
         # Login
         formhash     = formhash_input.first['value']
         login_url    = @base_url + "logging.php?action=login&loginsubmit=yes&inajax=0"
-        @agent.post login_url, "submit=true&formhash=#{formhash}&loginfield=username&username=#{username}&password=#{password}&questionid=0&answer=&cookietime=2592000"
+        @agent.post login_url, 
+          "submit=true&formhash=#{formhash}&loginfield=username&username=#{username}&password=#{password}&questionid=0&answer=&cookietime=2592000", 
+          :save_cookie => true
       else
         # Already logged in (this can happen if login is called multiple times in one session)
       end
@@ -38,24 +39,27 @@ module Discuz
   end
   
   class CurlAgent
-    attr :cookie_file
-    
     def initialize
       @cookie_file = "/tmp/c.txt"
-      `rm #{@cookie_file}`   # remove existing cookie file if any
+      `test #{@cookie_file} && rm #{@cookie_file}`   # remove existing cookie file if any
       
       user_agent  = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.2.6) Gecko/20100625 Firefox/3.6.6"
       @curl_cmd   = %Q(curl --stderr /dev/null -A "#{user_agent}" -b #{@cookie_file})
     end
     
-    def get url, extras = nil
-      cmd = %Q(#{@curl_cmd} #{extras} "#{url}")
+    def get url, options = {}
+      cmd = @curl_cmd
+      cmd += " -D #{@cookie_file}" if options[:save_cookie]
+      cmd += %Q( "#{url}")
       puts cmd
       %x(#{cmd})
     end
     
-    def post url, data, extras = nil
-      cmd = %Q(#{@curl_cmd} -d "#{data}" #{extras} "#{url}")
+    def post url, data, options = {}
+      cmd = @curl_cmd
+      cmd += " -D #{@cookie_file}" if options[:save_cookie]
+      cmd += %Q( -d "#{data}")
+      cmd += %Q( "#{url}")
       puts cmd
       %x(#{cmd})
     end
