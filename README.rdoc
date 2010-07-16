@@ -1,6 +1,6 @@
 = discuz_robot
 
-Description goes here.
+A Discuz robot created specifically for my other project (http://github.com/gcao/gocool).
 
 == Note on Patches/Pull Requests
  

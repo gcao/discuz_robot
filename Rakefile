@@ -5,9 +5,9 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "discuz_robot"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
-    gem.email = "gcao@vonage.com"
+    gem.summary = %Q{Discuz robot}
+    gem.description = %Q{Created for http://www.github.com/gcao/gocool}
+    gem.email = "gcao99@gmail.com"
     gem.homepage = "http://github.com/gcao/discuz_robot"
     gem.authors = ["Guoliang Cao"]
     gem.add_development_dependency "rspec", ">= 1.2.9"

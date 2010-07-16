@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby -rubygems
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+
+require 'discuz_robot'
+
+user = %x(/usr/bin/env robot_user).strip
+pass = %x(/usr/bin/env robot_pass).strip
+
+robot = Discuz::Robot.new
+robot.login user, pass
+robot.post 18, 'TEST SUBJECT', 'TEST MESSAGE'
