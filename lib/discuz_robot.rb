@@ -5,13 +5,10 @@ module Discuz
   class Robot
     def initialize base_url = "http://localhost/bbs/"
       @base_url  = base_url
-      @logged_in = false
       @agent     = CurlAgent.new
     end
     
     def login username, password
-      return if @logged_in
-      
       form_url       = @base_url + "logging.php?action=login"
       form_resp      = @agent.get form_url, :save_cookie => true
       form_doc       = Nokogiri::HTML(form_resp)
@@ -26,13 +23,9 @@ module Discuz
       else
         # Already logged in (this can happen if login is called multiple times in one session)
       end
-      
-      @logged_in = true
     end
     
     def post forum_id, subject, message, options = {}
-      login unless @logged_in
-      
       form_url  = @base_url + "post.php?action=newthread&fid=#{forum_id}"
       form_resp = @agent.get form_url
       # puts form_resp
